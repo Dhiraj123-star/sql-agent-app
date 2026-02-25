@@ -1,28 +1,30 @@
+
 # 🤖 Simple SQL Agent — FastAPI + OpenAI + SQLite
 
-A minimal AI-powered SQL agent that converts **natural language questions** into safe **SELECT SQL queries**, executes them on a local SQLite database, and returns structured results.
+A lightweight AI-powered SQL agent that converts **natural language questions** into safe **SELECT SQL queries**, executes them on SQLite, and returns structured JSON results.
 
 ---
 
-## 🚀 What This Project Does
+## 🚀 Features
 
-* Accepts natural language questions via API
+* Convert natural language → SQL
 * Uses **OpenAI Responses API**
-* Generates SQL dynamically
-* Executes only safe `SELECT` queries
-* Returns query results in JSON
-* Uses a local SQLite database
+* Executes dynamically generated SQL
+* Strictly allows only `SELECT` queries
+* Returns structured JSON responses
+* Dockerized (Python 3.12, multi-stage build)
+* SQLite persistence via Docker volume
 
 ---
 
 ## 🧠 How It Works
 
-1. User sends a question (`/query`)
-2. Agent receives DB schema + question
-3. Agent generates SQL
-4. App validates SQL (only `SELECT`)
-5. SQL runs against SQLite
-6. Results are returned
+1. Client sends a question to `/query`
+2. Agent receives database schema + user question
+3. OpenAI generates SQL
+4. SQL is validated (only `SELECT` allowed)
+5. Query executes on SQLite
+6. Results returned as JSON
 
 ---
 
@@ -31,21 +33,38 @@ A minimal AI-powered SQL agent that converts **natural language questions** into
 * **FastAPI** – API framework
 * **OpenAI Responses API** – LLM reasoning
 * **SQLite** – Local database
-* **SQLAlchemy** – ORM
-* **Pydantic** – Request/response validation
+* **SQLAlchemy** – Database interaction
+* **Pydantic** – Data validation
+* **Docker + Docker Compose** – Containerization (Python 3.12)
 
 ---
 
-## 🔒 Safety Features
+## 🔒 Safety Controls
 
-* Only `SELECT` queries allowed
-* Basic SQL validation layer
-* Controlled schema exposure
-* No destructive DB operations
+* Regex-based SQL validation
+* Rejects non-`SELECT` queries
+* No schema modification allowed
+* Controlled database exposure
 
 ---
 
-## 📌 Example Request
+## 📦 Run with Docker
+
+```bash
+docker compose up --build
+```
+
+API Docs:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## 📌 Example
+
+### Request
 
 ```json
 POST /query
@@ -54,7 +73,7 @@ POST /query
 }
 ```
 
-### Example Response
+### Response
 
 ```json
 {
@@ -65,14 +84,14 @@ POST /query
 
 ---
 
-## 🎯 Project Goal
+## 🎯 Project Vision
 
-A simple foundation for building:
+This project serves as a foundation for:
 
-* AI-powered database assistants
-* Internal analytics copilots
-* Natural language data interfaces
+* AI-powered database copilots
+* Internal analytics assistants
+* Natural language data querying systems
+* Secure LLM-driven backend services
 
 ---
-
 
