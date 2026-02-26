@@ -1,30 +1,46 @@
-
 # 🤖 Simple SQL Agent — FastAPI + OpenAI + SQLite
 
-A lightweight AI-powered SQL agent that converts **natural language questions** into safe **SELECT SQL queries**, executes them on SQLite, and returns structured JSON results.
+A production-ready AI-powered SQL agent that converts **natural language questions** into safe **SELECT SQL queries**, executes them on SQLite, and returns structured JSON responses.
 
 ---
 
 ## 🚀 Features
 
-* Convert natural language → SQL
-* Uses **OpenAI Responses API**
-* Executes dynamically generated SQL
-* Strictly allows only `SELECT` queries
-* Returns structured JSON responses
-* Dockerized (Python 3.12, multi-stage build)
-* SQLite persistence via Docker volume
+* Natural language → SQL generation
+* Powered by **OpenAI Responses API**
+* Strict `SELECT`-only execution policy
+* Automatic SQL cleaning & validation
+* Structured JSON responses
+* `/health` endpoint with DB connectivity check
+* Dockerized with **Python 3.12 (multi-stage build)**
+* Clean container architecture (`/app` + `/data`)
+* Persistent SQLite storage via mounted volume
 
 ---
 
 ## 🧠 How It Works
 
 1. Client sends a question to `/query`
-2. Agent receives database schema + user question
+2. App provides DB schema + question to OpenAI
 3. OpenAI generates SQL
-4. SQL is validated (only `SELECT` allowed)
-5. Query executes on SQLite
-6. Results returned as JSON
+4. SQL is cleaned and validated
+5. Only safe `SELECT` queries are executed
+6. Results returned in structured JSON format
+
+---
+
+## 🏗 Container Architecture
+
+```
+Container
+│
+├── /app   → Application code
+└── /data  → SQLite database file
+```
+
+* Code and data are isolated
+* No volume overrides
+* Clean production-ready layout
 
 ---
 
@@ -32,10 +48,11 @@ A lightweight AI-powered SQL agent that converts **natural language questions** 
 
 * **FastAPI** – API framework
 * **OpenAI Responses API** – LLM reasoning
-* **SQLite** – Local database
-* **SQLAlchemy** – Database interaction
+* **SQLite** – Embedded database
+* **SQLAlchemy** – Database engine/session handling
 * **Pydantic** – Data validation
-* **Docker + Docker Compose** – Containerization (Python 3.12)
+* **Docker + Docker Compose** – Containerization
+* **Uvicorn** – ASGI server
 
 ---
 
@@ -44,7 +61,8 @@ A lightweight AI-powered SQL agent that converts **natural language questions** 
 * Regex-based SQL validation
 * Rejects non-`SELECT` queries
 * No schema modification allowed
-* Controlled database exposure
+* Limited schema exposure to LLM
+* Health monitoring via `/health`
 
 ---
 
@@ -58,6 +76,12 @@ API Docs:
 
 ```
 http://localhost:8000/docs
+```
+
+Health Check:
+
+```
+http://localhost:8000/health
 ```
 
 ---
@@ -78,7 +102,9 @@ POST /query
 ```json
 {
   "sql": "SELECT COUNT(*) FROM users WHERE role='admin';",
-  "result": [[2]]
+  "result": [
+    { "COUNT(*)": 2 }
+  ]
 }
 ```
 
@@ -90,8 +116,7 @@ This project serves as a foundation for:
 
 * AI-powered database copilots
 * Internal analytics assistants
-* Natural language data querying systems
-* Secure LLM-driven backend services
+* Secure natural language data querying systems
+* LLM-driven backend microservices
 
 ---
-
