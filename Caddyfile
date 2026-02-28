@@ -1,0 +1,3 @@
+:80 {
+    reverse_proxy sql-agent:8000
+}
