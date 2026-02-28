@@ -10,11 +10,19 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Load the dynamic config file
+      - "--providers.file.directory=/etc/traefik/conf"
+      - "--providers.file.watch=true"
     ports:
       - "80:80"
+      - "443:443"
       - "8081:8080" # Dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./certs:/etc/traefik/certs:ro" # Mount the certs
+      - "./traefik_conf:/etc/traefik/conf:ro" # Mount the config
+
     networks:
       - web
 
@@ -25,6 +33,7 @@ services:
     restart: always
     ports:
       - "8082:80"
+      - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
@@ -49,7 +58,8 @@ services:
       # Labels allow Traefik to find this service automatically
       - "traefik.enable=true"
       - "traefik.http.routers.sql-agent.rule=Host(`localhost`)"
-      - "traefik.http.routers.sql-agent.entrypoints=web"
+      - "traefik.http.routers.sql-agent.entrypoints=websecure"
+      - "traefik.http.routers.sql-agent.tls=true"
       - "traefik.http.services.sql-agent.loadbalancer.server.port=8000"
 
 networks:
