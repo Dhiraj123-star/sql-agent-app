@@ -19,3 +19,7 @@ logs/
 Thumbs.db
 # database
 *.db
+# Ignore certs
+certs/
+*.crt
+*.key
